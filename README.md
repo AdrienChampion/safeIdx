@@ -1,5 +1,7 @@
 # SafeIdx
 
+- [Zulip thread][zulip]
+
 A *(type-)safe index* is a type that's a thin wrapper over `Nat` mainly used to (type-)safely access
 cells in an array. Safe indices can be seen as **U**nique **ID**entifiers (UIDs) for some type of
 data that can be passed around cheaply. Using a dedicated type instead of just `Nat` makes sure we
@@ -30,9 +32,9 @@ around with optimization.
 ## Example
 
 Say you have a `Client` type; SafeIdx can generate a safe index type for it, say `Client.Uid`, along
-with a type for mapping `Client.Uid`s to some type. This map type is really an array, but it can
-only be indexed by `Client.Uid`. SafeIdx also provides dependent maps where the map's length appears
-in the map's type.
+with a type for mapping `Client.Uid`s to values of some type. This map type is really just an array,
+but it can only be indexed by `Client.Uid`. SafeIdx also provides dependent maps where the map's
+length appears in the map's type.
 
 If then for some reason you have a `ClientFamily` type and also generate a safe index type for it,
 then Lean will prevent you from ever indexing a `Client` map with a `ClientFamily` index and *vice
@@ -40,7 +42,8 @@ versa*.
 
 Note that accessing an array uses `Client.FUid`, which is SafeIdx's equivalent of Lean's `Fin` type.
 That is, `Client.FUid n` is a `Client.Uid` along with a proof that the UID's internal `Nat` is
-strictly smaller than `n`. See the `SafeIdx.FUid` type for more details.
+strictly smaller than `n`. See the `SafeIdx.FUid` type in [SafeIdx/Map/UidMapD.lean][UidMapD] for
+more details.
 
 ```lean
 -- SafeIdx's syntax extension for defining indices
@@ -90,11 +93,12 @@ index Client.Uid where
 ```
 
 See [`Test/Basic.lean`][testBasic] and [`Test/Client.lean`][testClient] for more details on the
-syntax. For more information on mappings, see [`SafeIdx.UidMapD`][UidMapD] for dependent maps and
-[`SafeIdx.UidMap`][UidMap] for regular ones.
+syntax. For more information on mappings (and `FUid`s), see [`SafeIdx.UidMapD`][UidMapD] for
+dependent maps and [`SafeIdx.UidMap`][UidMap] for regular ones.
 
-[UidMapD]: SafeIdx/UidMapD.lean
-[UidMap]: SafeIdx/UidMap.lean
+[UidMapD]: SafeIdx/Map/UidMapD.lean
+[UidMap]: SafeIdx/Map/UidMap.lean
 [testBasic]: SafeIdx/Test/Basic.lean
 [testClient]: SafeIdx/Test/Client.lean
 [`safe_index`]: https://crates.io/crates/safe_index
+[zulip]: https://leanprover.zulipchat.com/#narrow/stream/113489-new-members/topic/SafeIdx.3A.20a.20beginner-friendly.20library
