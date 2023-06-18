@@ -29,6 +29,8 @@ def Client.mk'
 : Client :=
   ⟨name, email, idx⟩
 
+
+
 def run : IO Unit := do
   println! "-- building `DMap`, accessing with indices from `DMap.pushIdx`"
   --  vvvvvvv~~~~ `Client.Idx.DArray 0 Client`
@@ -62,7 +64,23 @@ def run : IO Unit := do
   for idx in clients.indices do
     println! "-- - idx : {idx}"
 
-  println! "-- \n-- switching to `Map`, accessing with indices from `DMap`:"
+
+  println! "-- \n-- folding"
+  let s := clients.foldlIdx
+    (fun s uid client =>
+      let sep := if s.isEmpty then "" else ", "
+      s ++ sep ++ s!"{client} ({uid})")
+    ""
+  println! "-- - foldl : {s}"
+  let s := clients.foldrIdx
+    (fun uid client s =>
+      let sep := if s.isEmpty then "" else ", "
+      s ++ sep ++ s!"{client} ({uid})")
+    ""
+  println! "-- - foldr : {s}"
+
+
+  println! "-- \n-- \n-- switching to `Map`, accessing with indices from `DMap`:"
   --  vvvvvvvv~~~~ `Client.Idx.Array Client`, length has been erased from the type
   let clients' :=
     clients.toMap
@@ -71,6 +89,21 @@ def run : IO Unit := do
   println! "--   jef : {clients'[jef]}"
   println! "--   cat : {clients'[cat]}"
   println! "--   dog : {clients'[dog]}"
+
+
+  println! "-- \n-- folding"
+  let s := clients'.foldlIdx
+    (fun s uid client =>
+      let sep := if s.isEmpty then "" else ", "
+      s ++ sep ++ s!"{client} ({uid})")
+    ""
+  println! "-- - foldl : {s}"
+  let s := clients'.foldrIdx
+    (fun uid client s =>
+      let sep := if s.isEmpty then "" else ", "
+      s ++ sep ++ s!"{client} ({uid})")
+    ""
+  println! "-- - foldr : {s}"
 
 
   println! "-- \n-- for-loop on `clients'`"
@@ -104,10 +137,19 @@ def run : IO Unit := do
 -- - idx : #1<3
 -- - idx : #2<3
 -- 
+-- folding
+-- - foldl : cat <cat@neko.nya> #0 (#0<3), dog <dog@inu.wan> #1 (#1<3), jef <jef@ningen.com> #2 (#2<3)
+-- - foldr : jef <jef@ningen.com> #2 (#2<3), dog <dog@inu.wan> #1 (#1<3), cat <cat@neko.nya> #0 (#0<3)
+-- 
+-- 
 -- switching to `Map`, accessing with indices from `DMap`:
 --   jef : jef <jef@ningen.com> #2
 --   cat : cat <cat@neko.nya> #0
 --   dog : dog <dog@inu.wan> #1
+-- 
+-- folding
+-- - foldl : cat <cat@neko.nya> #0 (#0<3), dog <dog@inu.wan> #1 (#1<3), jef <jef@ningen.com> #2 (#2<3)
+-- - foldr : jef <jef@ningen.com> #2 (#2<3), dog <dog@inu.wan> #1 (#1<3), cat <cat@neko.nya> #0 (#0<3)
 -- 
 -- for-loop on `clients'`
 -- - cat <cat@neko.nya> #0

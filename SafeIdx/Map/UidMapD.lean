@@ -244,16 +244,16 @@ section
           let fuid : FUid Uid n :=
             FUid.mk (ofNat idx) $ S.cancel_to_of ▸ h
           let acc := f acc fuid dmap[fuid]
-          foldlIdxAux acc n.succ
+          foldlIdxAux acc idx.succ
         else
           acc
     termination_by
       foldlIdxAux _ idx => n - idx
     decreasing_by
       simp_wf
-      apply Nat.lt_sub_of_add_lt
-      simp_arith [Nat.sub_succ]
-      exact h
+      apply Nat.sub_lt_sub_left
+      · exact h
+      · exact Nat.lt_succ_self idx
 
     /-- Fold-left, see also `foldlIdx`. -/
     def UidMapD.foldl
