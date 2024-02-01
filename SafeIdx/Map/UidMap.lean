@@ -46,7 +46,7 @@ def FUid.ofLegal
   (h: uidMap.isLegal uid)
 : FUid Uid uidMap.len :=
   ⟨uid, h⟩
-  
+
 /-- A `FUid _ n` is a legal index for `map` if `n` is smaller than `map`'s length. -/
 @[simp]
 def FUid.mapLift
@@ -164,7 +164,7 @@ instance : GetElem
   fun map _uid => n ≤ map.len
 where
   getElem dmap fuid h :=
-    dmap.get $ fuid.lift
+    dmap.get fuid.lift
 
 @[inherit_doc UidMapD.get?]
 def UidMap.get? : Uid → Option α :=
@@ -240,7 +240,7 @@ section pure
   /-- Constructs the map with only one mapping: first uid to `a`. -/
   def UidMap.pure (a : α) : UidMap Uid α :=
     ⟨1, UidMapD.pure a⟩
-  
+
   instance : Pure (UidMap Uid) where
     pure := UidMap.pure
 end pure

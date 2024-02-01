@@ -66,7 +66,7 @@ section
     exact inferInstance
 
 
-  
+
   /-- Constructor from a legal uid. -/
   def FUid.ofDLegal
     {dmap : UidMapD n Uid α} {uid : Uid}
@@ -182,7 +182,7 @@ section
     (UidMapD n Uid α) (FUid Uid n') α fun _ _ => n' ≤ n
   where
     getElem dmap fuid h :=
-      dmap.get $ fuid.lift
+      dmap.get fuid.lift
 
   /-- Attempts to retrieve a value in the map. -/
   def UidMapD.get? : Option α :=
@@ -369,4 +369,3 @@ section
       seq := UidMapD.seq
   end applicative
 end
-

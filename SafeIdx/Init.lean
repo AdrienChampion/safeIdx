@@ -63,7 +63,7 @@ section fuid
   /-- A `FUid _ n'` is a `FUid _ n` when `n' ≤ n`. -/
   def FUid.lift
     (fuid : FUid Uid n')
-    (h : n' ≤ n := by try simp_arith ; assumption)
+    (h : n' ≤ n := by try assumption ; try simp_arith)
   : FUid Uid n :=
     ⟨fuid.uid, Nat.lt_of_lt_of_le fuid.isLt h⟩
 
