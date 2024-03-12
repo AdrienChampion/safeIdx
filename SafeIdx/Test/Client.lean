@@ -121,46 +121,46 @@ def run : IO Unit := do
 --   jef : jef <jef@ningen.com> #2
 --   cat : cat <cat@neko.nya> #0
 --   dog : dog <dog@inu.wan> #1
--- 
+--
 -- for-loop on `clients`
 -- - cat <cat@neko.nya> #0
 -- - dog <dog@inu.wan> #1
 -- - jef <jef@ningen.com> #2
--- 
+--
 -- for-loop on `clients.iterIdx`
 -- - #0<3 ↦ cat <cat@neko.nya> #0
 -- - #1<3 ↦ dog <dog@inu.wan> #1
 -- - #2<3 ↦ jef <jef@ningen.com> #2
--- 
+--
 -- for-loop on `clients.indices`
 -- - idx : #0<3
 -- - idx : #1<3
 -- - idx : #2<3
--- 
+--
 -- folding
 -- - foldl : cat <cat@neko.nya> #0 (#0<3), dog <dog@inu.wan> #1 (#1<3), jef <jef@ningen.com> #2 (#2<3)
 -- - foldr : jef <jef@ningen.com> #2 (#2<3), dog <dog@inu.wan> #1 (#1<3), cat <cat@neko.nya> #0 (#0<3)
--- 
--- 
+--
+--
 -- switching to `Map`, accessing with indices from `DMap`:
 --   jef : jef <jef@ningen.com> #2
 --   cat : cat <cat@neko.nya> #0
 --   dog : dog <dog@inu.wan> #1
--- 
+--
 -- folding
 -- - foldl : cat <cat@neko.nya> #0 (#0<3), dog <dog@inu.wan> #1 (#1<3), jef <jef@ningen.com> #2 (#2<3)
 -- - foldr : jef <jef@ningen.com> #2 (#2<3), dog <dog@inu.wan> #1 (#1<3), cat <cat@neko.nya> #0 (#0<3)
--- 
+--
 -- for-loop on `clients'`
 -- - cat <cat@neko.nya> #0
 -- - dog <dog@inu.wan> #1
 -- - jef <jef@ningen.com> #2
--- 
+--
 -- for-loop on `clients'.iterIdx`
 -- - #0<3 ↦ cat <cat@neko.nya> #0
 -- - #1<3 ↦ dog <dog@inu.wan> #1
 -- - #2<3 ↦ jef <jef@ningen.com> #2
--- 
+--
 -- for-loop on `clients'.indices`
 -- - idx : #0<3
 -- - idx : #1<3

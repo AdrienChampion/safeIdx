@@ -146,38 +146,58 @@ def elabNewIndex : CommandElab
 ) => do
   -- ident version of the type's name, useable as a term unlike `id`
   let idxIdent := Lean.mkIdent idxId.raw[0].getId
+  -- constructor
+  -- let consIdent := Lean.mkIdent `ofNat
+  -- constructor
+  -- let consIdent :=
+  --   idxId.raw[0].getId.modifyBase (. ++ `ofNat)
+  -- let consIdent' :=
+  --   consIdent |> mkIdentFrom idxId
+    -- idxId.raw[0].getId.modifyBase (. ++ `mk)
+    -- |> mkIdentFrom idxId
   -- name of the `UidSpec` instance
   let instIdent := Lean.mkIdent `instUidSpec
+  let instFullIdent :=
+    idxId.raw[0].getId.modifyBase (. ++ `instUidSpec)
+    |> mkIdentFrom idxId
   -- name of the `FUid` specialization
   let fuidIdent :=
     idxId.raw[0].getId.modifyBase (. ++ `FUid)
     |> mkIdentFrom idxId
 
-  -- actual type definition
   elabCommand $ ← `(
     $declMods:declModifiers
     structure $idxId where private mk ::
       private idx : Nat
     deriving Inhabited, Repr
 
-    instance (priority := low) : ToString $idxIdent where
-      toString self := s!"#{self.idx}"
-  )
+    namespace $idxIdent
+      instance instToExpr : Lean.ToExpr $idxIdent where
+        toExpr
+        | ⟨idx⟩ =>
+          let sub := Lean.ToExpr.toExpr idx
+          .app (.const ``mk []) sub
+        toTypeExpr := .const ``mk []
 
-  -- register `UidSpec` instance and `FUid` specialization
-  elabCommand $ ← `(
-    /-- `SafeIdx.UidSpec` mandatory class instantiation. -/
-    instance $instIdent:ident : UidSpec $idxIdent :=
-      ⟨fun ⟨idx⟩ => idx, (⟨·⟩), rfl, rfl⟩
-    
+      instance : Inhabited $idxIdent where
+        default := mk 0
+
+      instance (priority := low) : ToString $idxIdent where
+        toString self := s!"#{self.idx}"
+
+      /-- `SafeIdx.UidSpec` mandatory class instantiation. -/
+      instance $instIdent:ident : UidSpec $idxIdent :=
+        ⟨fun ⟨idx⟩ => idx, (⟨·⟩), rfl, rfl⟩
+    end $idxIdent
+
     abbrev $fuidIdent :=
       SafeIdx.FUid $idxIdent
   )
 
   let mapAliasGen (mods : TSyntax `Lean.Parser.Command.declModifiers) (alias : Lean.Ident) := do
-    Dsl.mapRedefs mods idxIdent instIdent fuidIdent alias false
+    Dsl.mapRedefs mods idxIdent instFullIdent fuidIdent alias false
   let dmapAliasGen (mods : TSyntax `Lean.Parser.Command.declModifiers) (alias : Lean.Ident) := do
-    Dsl.mapRedefs mods idxIdent instIdent fuidIdent alias true
+    Dsl.mapRedefs mods idxIdent instFullIdent fuidIdent alias true
   -- zip the name and alias arrays together, if any
   let aliasPairs :=
     if
