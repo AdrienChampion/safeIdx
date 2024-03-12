@@ -19,6 +19,7 @@ structure UidMap
 where
   len : Nat
   dmap : UidMapD len Uid α
+deriving Repr, Inhabited, Hashable
 
 
 
@@ -109,10 +110,6 @@ def UidMap.mkI
   (capacity : Nat := 666)
 : UidMap Uid α :=
   mkD len default capacity
-
-instance [Inhabited α] (len : Nat) : Inhabited (UidMap Uid α) where
-  default :=
-    UidMap.mkI len
 
 
 
@@ -224,6 +221,29 @@ def UidMap.mapValueM
 : M (UidMap Uid α) := do
   let dmap ← uidMap.dmap.mapValueM ⟨uid, h⟩ f
   return {uidMap with dmap}
+
+def UidMap.mapValueM?
+  {M : Type → Type} [Monad M]
+  (uid : Uid) (f_legal : α → M α) (f_else : M (UidMap Uid α))
+: M (UidMap Uid α) := do
+  if h : uidMap.isLegal uid then
+    let dmap ← uidMap.dmap.mapValueM ⟨uid, h⟩ f_legal
+    return {uidMap with dmap}
+  else
+    f_else
+
+def UidMap.mapValueM!
+  [Inhabited α]
+  [ToString Uid]
+  {M : Type → Type} [Monad M]
+  (uid : Uid) (f : α → M α)
+: M (UidMap Uid α) := do
+  if h : uidMap.isLegal uid then
+    let dmap ← uidMap.dmap.mapValueM ⟨uid, h⟩ f
+    return {uidMap with dmap}
+  else
+    panic!
+      s!"illegal index `{uid}` for a map containing {uidMap.len} element(s)"
 
 
 

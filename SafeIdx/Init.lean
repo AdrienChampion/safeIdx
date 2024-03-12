@@ -48,7 +48,9 @@ section fuid
     uid : Uid
     isLt : toNat uid < n := by simp_arith
 
-  instance [UidSpec Uid] [ToString Uid] : ToString (FUid Uid n) where
+  instance FUid.toString
+    [UidSpec Uid] [ToString Uid]
+  : ToString (FUid Uid n) where
     toString fuid :=
       s!"{fuid.uid}<{n}"
 
