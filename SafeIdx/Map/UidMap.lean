@@ -217,30 +217,30 @@ end set
 
 def UidMap.mapValueM
   {M : Type → Type} [Monad M]
-  (uid : Uid) (h : uidMap.isLegal uid) (f : α → M α)
-: M (UidMap Uid α) := do
-  let dmap ← uidMap.dmap.mapValueM ⟨uid, h⟩ f
-  return {uidMap with dmap}
+  (uid : Uid) (h : uidMap.isLegal uid) (f : α → M (α × β))
+: M (β × UidMap Uid α) := do
+  let (res, dmap) ← uidMap.dmap.mapValueM ⟨uid, h⟩ f
+  return (res, {uidMap with dmap})
 
-def UidMap.mapValueM?
-  {M : Type → Type} [Monad M]
-  (uid : Uid) (f_legal : α → M α) (f_else : M (UidMap Uid α))
-: M (UidMap Uid α) := do
-  if h : uidMap.isLegal uid then
-    let dmap ← uidMap.dmap.mapValueM ⟨uid, h⟩ f_legal
-    return {uidMap with dmap}
+def UidMap.mapValue
+  (uid : Uid) (h : uidMap.isLegal uid) (f : α → α × β)
+: β × UidMap Uid α :=
+  uidMap.mapValueM (M := Id) uid h f
+
+def UidMap.mapValue?
+  (uid : Uid) (fLegal : α → α × β) (fElse : Unit → β)
+: β × UidMap Uid α :=
+  if h : uidMap.dmap.isLegal uid then
+    uidMap.mapValue uid h fLegal
   else
-    f_else
+    (fElse (), uidMap)
 
-def UidMap.mapValueM!
-  [Inhabited α]
-  [ToString Uid]
-  {M : Type → Type} [Monad M]
-  (uid : Uid) (f : α → M α)
-: M (UidMap Uid α) := do
-  if h : uidMap.isLegal uid then
-    let dmap ← uidMap.dmap.mapValueM ⟨uid, h⟩ f
-    return {uidMap with dmap}
+def UidMap.mapValue!
+  [Inhabited α] [Inhabited β] [ToString Uid]
+  (uid : Uid) (fLegal : α → α × β)
+: β × UidMap Uid α :=
+  if h : uidMap.dmap.isLegal uid then
+    uidMap.mapValue uid h fLegal
   else
     panic!
       s!"illegal index `{uid}` for a map containing {uidMap.len} element(s)"

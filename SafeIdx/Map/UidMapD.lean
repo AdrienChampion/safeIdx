@@ -235,11 +235,12 @@ section
 
 
   def UidMapD.mapValueM
+    {β : Type u}
     {M : Type u → Type v} [Monad M]
-    (uid : FUid Uid n) (f : α → M α)
-  : M (UidMapD n Uid α) := do
-    let val ← f $ dmap.get uid
-    return dmap.set uid val
+    (uid : FUid Uid n) (f : α → M (α × β))
+  : M (β × UidMapD n Uid α) := do
+    let (val, res) ← f $ dmap.get uid
+    return (res, dmap.set uid val)
 
 
 
