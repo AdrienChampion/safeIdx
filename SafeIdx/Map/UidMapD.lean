@@ -247,13 +247,12 @@ section
           foldlIdxAux acc idx.succ
         else
           acc
-    termination_by
-      foldlIdxAux _ idx => n - idx
-    decreasing_by
-      simp_wf
-      apply Nat.sub_lt_sub_left
-      · exact h
-      · exact Nat.lt_succ_self idx
+      termination_by n - idx
+      decreasing_by
+        simp_wf
+        apply Nat.sub_lt_sub_left
+        · exact h
+        · exact Nat.lt_succ_self idx
 
     /-- Fold-left, see also `foldlIdx`. -/
     def UidMapD.foldl
