@@ -87,6 +87,10 @@ section
   def UidMapD.size : Nat :=
     dmap.len
 
+  /-- Produces a list of all the elements. -/
+  def UidMapD.toList : List α :=
+    dmap.raw.toList
+
 
 
   /-- Creates an empty map with some capacity. -/
@@ -227,6 +231,15 @@ section
       then dmap.set ⟨uid, h⟩ a
       else panic! s!"illegal index {S.toNat uid}, length is {n}"
   end set
+
+
+
+  def UidMapD.mapValueM
+    {M : Type u → Type v} [Monad M]
+    (uid : FUid Uid n) (f : α → M α)
+  : M (UidMapD n Uid α) := do
+    let val ← f $ dmap.get uid
+    return dmap.set uid val
 
 
 

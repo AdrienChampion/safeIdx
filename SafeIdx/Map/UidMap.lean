@@ -58,6 +58,23 @@ def FUid.mapLift
 
 
 
+section
+  variable (uidMap : UidMap Uid α)
+
+  /-- Size/length of a map. -/
+  def UidMap.length : Nat :=
+    uidMap.len
+  /-- Size/length of a map. -/
+  def UidMap.size : Nat :=
+    uidMap.len
+
+  /-- Produces a list of all the elements. -/
+  def UidMap.toList : List α :=
+    uidMap.dmap.toList
+end
+
+
+
 @[inherit_doc UidMapD.mkEmpty]
 def UidMap.mkEmpty
   {α : outParam Type}
@@ -198,6 +215,15 @@ section set
   def UidMap.set! [Inhabited α] : UidMap Uid α :=
     {uidMap with dmap := uidMap.dmap.set! uid a}
 end set
+
+
+
+def UidMap.mapValueM
+  {M : Type → Type} [Monad M]
+  (uid : Uid) (h : uidMap.isLegal uid) (f : α → M α)
+: M (UidMap Uid α) := do
+  let dmap ← uidMap.dmap.mapValueM ⟨uid, h⟩ f
+  return {uidMap with dmap}
 
 
 
