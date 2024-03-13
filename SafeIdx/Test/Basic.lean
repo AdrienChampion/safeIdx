@@ -135,6 +135,15 @@ namespace RedefBoth
     #check MyIdx.MapD.generate
     #check MyIdx.MapD.mkD
     #check MyIdx.MapD.mkI
+
+    -- #eval do
+    --   let m := MyIdx.Map.mkEmpty 5
+    --   let (idx, m) := m.push 1
+    --   let idx : MyIdx := idx.uid
+    --   println! "idx : {idx}"
+    --   let expr := Lean.ToExpr.toExpr idx
+    --   println! "expr : {expr}"
+    --   println! "typExpr : {MyIdx.instToExpr.toTypeExpr}"
   end Test₂
 end RedefBoth
 

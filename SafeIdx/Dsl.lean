@@ -156,7 +156,8 @@ def elabNewIndex : CommandElab
     -- idxId.raw[0].getId.modifyBase (. ++ `mk)
     -- |> mkIdentFrom idxId
   -- name of the `UidSpec` instance
-  let instIdent := Lean.mkIdent `instUidSpec
+  let instUidSpecIdent := Lean.mkIdent `instUidSpec
+  let instToExprIdent := Lean.mkIdent `instToExpr
   let instFullIdent :=
     idxId.raw[0].getId.modifyBase (. ++ `instUidSpec)
     |> mkIdentFrom idxId
@@ -172,31 +173,34 @@ def elabNewIndex : CommandElab
     deriving Inhabited, Repr
 
     namespace $idxIdent
-      instance instToExpr : Lean.ToExpr $idxIdent where
-        toExpr
-        | ⟨idx⟩ =>
-          let sub := Lean.ToExpr.toExpr idx
-          .app (.const ``mk []) sub
-        toTypeExpr := .const ``mk []
+      /-- `SafeIdx.UidSpec` mandatory class instantiation. -/
+      instance $instUidSpecIdent:ident : UidSpec $idxIdent :=
+        ⟨fun ⟨idx⟩ => idx, (⟨·⟩), rfl, rfl⟩
+
+      instance $instToExprIdent:ident : Lean.ToExpr $idxIdent where
+        toExpr := $(instUidSpecIdent).toExpr
+        toTypeExpr := .const ``$idxIdent []
 
       instance : Inhabited $idxIdent where
         default := mk 0
 
       instance (priority := low) : ToString $idxIdent where
         toString self := s!"#{self.idx}"
-
-      /-- `SafeIdx.UidSpec` mandatory class instantiation. -/
-      instance $instIdent:ident : UidSpec $idxIdent :=
-        ⟨fun ⟨idx⟩ => idx, (⟨·⟩), rfl, rfl⟩
     end $idxIdent
 
     abbrev $fuidIdent :=
       SafeIdx.FUid $idxIdent
   )
 
-  let mapAliasGen (mods : TSyntax `Lean.Parser.Command.declModifiers) (alias : Lean.Ident) := do
+  let mapAliasGen
+    (mods : TSyntax `Lean.Parser.Command.declModifiers)
+    (alias : Lean.Ident)
+  := do
     Dsl.mapRedefs mods idxIdent instFullIdent fuidIdent alias false
-  let dmapAliasGen (mods : TSyntax `Lean.Parser.Command.declModifiers) (alias : Lean.Ident) := do
+  let dmapAliasGen
+    (mods : TSyntax `Lean.Parser.Command.declModifiers)
+    (alias : Lean.Ident)
+  := do
     Dsl.mapRedefs mods idxIdent instFullIdent fuidIdent alias true
   -- zip the name and alias arrays together, if any
   let aliasPairs :=
