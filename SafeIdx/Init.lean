@@ -29,13 +29,6 @@ class UidSpec (α : Type) where
   /-- `toNat` cancels `toNat`. -/
   cancel_to_of : toNat (ofNat n) = n
 
-namespace UidSpec
-  def toExpr [UidSpec α] (a : α) : Lean.Expr :=
-    let idx :=
-      toNat a |> Lean.ToExpr.toExpr
-    .app (.const `ofNat []) idx
-end UidSpec
-
 open UidSpec (toNat ofNat)
 
 

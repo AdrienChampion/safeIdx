@@ -146,18 +146,8 @@ def elabNewIndex : CommandElab
 ) => do
   -- ident version of the type's name, useable as a term unlike `id`
   let idxIdent := Lean.mkIdent idxId.raw[0].getId
-  -- constructor
-  -- let consIdent := Lean.mkIdent `ofNat
-  -- constructor
-  -- let consIdent :=
-  --   idxId.raw[0].getId.modifyBase (. ++ `ofNat)
-  -- let consIdent' :=
-  --   consIdent |> mkIdentFrom idxId
-    -- idxId.raw[0].getId.modifyBase (. ++ `mk)
-    -- |> mkIdentFrom idxId
-  -- name of the `UidSpec` instance
+  -- instance names
   let instUidSpecIdent := Lean.mkIdent `instUidSpec
-  let instToExprIdent := Lean.mkIdent `instToExpr
   let instFullIdent :=
     idxId.raw[0].getId.modifyBase (. ++ `instUidSpec)
     |> mkIdentFrom idxId
@@ -177,9 +167,9 @@ def elabNewIndex : CommandElab
       instance $instUidSpecIdent:ident : UidSpec $idxIdent :=
         ⟨fun ⟨idx⟩ => idx, (⟨·⟩), rfl, rfl⟩
 
-      instance $instToExprIdent:ident : Lean.ToExpr $idxIdent where
-        toExpr := $(instUidSpecIdent).toExpr
-        toTypeExpr := .const ``$idxIdent []
+      -- instance $instToExprIdent:ident : Lean.ToExpr $idxIdent where
+      --   toExpr := $(instUidSpecIdent).toExpr
+      --   toTypeExpr := .const ``$idxIdent []
 
       instance : Inhabited $idxIdent where
         default := mk 0
