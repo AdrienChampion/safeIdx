@@ -148,6 +148,8 @@ def elabNewIndex : CommandElab
   let idxIdent := Lean.mkIdent idxId.raw[0].getId
   -- instance names
   let instUidSpecIdent := Lean.mkIdent `instUidSpec
+  -- let instToExprIdent := Lean.mkIdent `instToExpr
+  -- let instDecidableEqIdent := Lean.mkIdent `instDecidableEq
   let instFullIdent :=
     idxId.raw[0].getId.modifyBase (. ++ `instUidSpec)
     |> mkIdentFrom idxId
@@ -170,6 +172,15 @@ def elabNewIndex : CommandElab
       -- instance $instToExprIdent:ident : Lean.ToExpr $idxIdent where
       --   toExpr := $(instUidSpecIdent).toExpr
       --   toTypeExpr := .const ``$idxIdent []
+
+      -- instance $instDecidableEqIdent:ident : DecidableEq $idxIdent
+      --   | ⟨idx⟩, ⟨idx'⟩ =>
+      --     if h : idx = idx' then by
+      --       apply Decidable.isTrue
+      --       rw [h]
+      --     else
+      --       apply Decidable.isFalse
+      --       simp [h]
 
       instance : Inhabited $idxIdent where
         default := mk 0
