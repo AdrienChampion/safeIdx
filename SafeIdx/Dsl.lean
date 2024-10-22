@@ -10,91 +10,89 @@ open Lean Elab Command Term Meta
 
 
 
-section
-  protected def mapRedefs
-    (mods : TSyntax `Lean.Parser.Command.declModifiers)
-    (idxIdent : Ident)
-    (instIdent : Ident)
-    (fuidIdent : Ident)
-    (mapIdent : Ident)
-    (isDependent : Bool)
-  := do
-    -- identifiers we're gonna use in codegen
-    let capa := mkIdent `capacity
-    let alpha := mkIdent `α
-    let len := mkIdent `len
-    let gen := mkIdent `gen
+protected def mapRedefs
+  (mods : TSyntax `Lean.Parser.Command.declModifiers)
+  (idxIdent : Ident)
+  (instIdent : Ident)
+  (fuidIdent : Ident)
+  (mapIdent : Ident)
+  (isDependent : Bool)
+:= do
+  -- identifiers we're gonna use in codegen
+  let capa := mkIdent `capacity
+  let alpha := mkIdent `α
+  let len := mkIdent `len
+  let gen := mkIdent `gen
 
-    if isDependent then
-      elabCommand $ ← `(
-        $mods:declModifiers
-        def $mapIdent ($len:ident : Nat) ($alpha:ident : Type) :=
-          @SafeIdx.UidMapD $len $idxIdent $instIdent $alpha
-        namespace $mapIdent
-          @[inherit_doc SafeIdx.UidMapD.mkEmpty]
-          abbrev $(mkIdent `mkEmpty)
-            {$alpha : Type}
-            ($capa : Nat := 666)
-          : $mapIdent 0 $alpha :=
-            SafeIdx.UidMapD.mkEmpty $capa
-          @[inherit_doc SafeIdx.UidMapD.generate]
-          abbrev $(mkIdent `generate)
-            ($len:ident : Nat)
-            ($gen : $fuidIdent $len → $alpha)
-            ($capa : Nat := 666)
-          : $mapIdent $len $alpha :=
-            SafeIdx.UidMapD.generate $len $gen $capa
-          @[inherit_doc SafeIdx.UidMapD.mkD]
-          abbrev $(mkIdent `mkD)
-            ($len:ident : Nat)
-            (default : $alpha)
-            ($capa : Nat := 666)
-          : $mapIdent $len $alpha :=
-            SafeIdx.UidMapD.mkD $len default $capa
-          @[inherit_doc SafeIdx.UidMapD.mkI]
-          abbrev $(mkIdent `mkI)
-            ($len:ident : Nat)
-            [Inhabited $alpha]
-            ($capa : Nat := 666)
-          : $mapIdent $len $alpha :=
-            SafeIdx.UidMapD.mkI $len $capa
-        end $mapIdent
-      )
-    else
-      elabCommand $ ← `(
-        $mods:declModifiers
-        def $mapIdent ($alpha:ident : Type) :=
-          @SafeIdx.UidMap $idxIdent $instIdent $alpha
-        namespace $mapIdent
-          @[inherit_doc SafeIdx.UidMap.mkEmpty]
-          abbrev $(mkIdent `mkEmpty)
-            ($capa : Nat := 666)
-          : $mapIdent $alpha :=
-            SafeIdx.UidMap.mkEmpty $capa
-          @[inherit_doc SafeIdx.UidMap.generate]
-          abbrev $(mkIdent `generate)
-            ($len:ident : Nat)
-            ($gen : $fuidIdent $len → $alpha)
-            ($capa : Nat := 666)
-          : $mapIdent $alpha :=
-            SafeIdx.UidMap.generate $len $gen $capa
-          @[inherit_doc SafeIdx.UidMap.mkD]
-          abbrev $(mkIdent `mkD)
-            ($len:ident : Nat)
-            (default : $alpha)
-            ($capa : Nat := 666)
-          : $mapIdent $alpha :=
-            SafeIdx.UidMap.mkD $len default $capa
-          @[inherit_doc SafeIdx.UidMap.mkI]
-          abbrev $(mkIdent `mkI)
-            ($len:ident : Nat)
-            [Inhabited $alpha]
-            ($capa : Nat := 666)
-          : $mapIdent $alpha :=
-            SafeIdx.UidMap.mkI $len $capa
-        end $mapIdent
-      )
-end
+  if isDependent then
+    elabCommand $ ← `(
+      $mods:declModifiers
+      def $mapIdent ($len:ident : Nat) ($alpha:ident : Type) :=
+        @SafeIdx.UidMapD $len $idxIdent $instIdent $alpha
+      namespace $mapIdent
+        @[inherit_doc SafeIdx.UidMapD.mkEmpty]
+        abbrev $(mkIdent `mkEmpty)
+          {$alpha : Type}
+          ($capa : Nat := 666)
+        : $mapIdent 0 $alpha :=
+          SafeIdx.UidMapD.mkEmpty $capa
+        @[inherit_doc SafeIdx.UidMapD.generate]
+        abbrev $(mkIdent `generate)
+          ($len:ident : Nat)
+          ($gen : $fuidIdent $len → $alpha)
+          ($capa : Nat := 666)
+        : $mapIdent $len $alpha :=
+          SafeIdx.UidMapD.generate $len $gen $capa
+        @[inherit_doc SafeIdx.UidMapD.mkD]
+        abbrev $(mkIdent `mkD)
+          ($len:ident : Nat)
+          (default : $alpha)
+          ($capa : Nat := 666)
+        : $mapIdent $len $alpha :=
+          SafeIdx.UidMapD.mkD $len default $capa
+        @[inherit_doc SafeIdx.UidMapD.mkI]
+        abbrev $(mkIdent `mkI)
+          ($len:ident : Nat)
+          [Inhabited $alpha]
+          ($capa : Nat := 666)
+        : $mapIdent $len $alpha :=
+          SafeIdx.UidMapD.mkI $len $capa
+      end $mapIdent
+    )
+  else
+    elabCommand $ ← `(
+      $mods:declModifiers
+      def $mapIdent ($alpha:ident : Type) :=
+        @SafeIdx.UidMap $idxIdent $instIdent $alpha
+      namespace $mapIdent
+        @[inherit_doc SafeIdx.UidMap.mkEmpty]
+        abbrev $(mkIdent `mkEmpty)
+          ($capa : Nat := 666)
+        : $mapIdent $alpha :=
+          SafeIdx.UidMap.mkEmpty $capa
+        @[inherit_doc SafeIdx.UidMap.generate]
+        abbrev $(mkIdent `generate)
+          ($len:ident : Nat)
+          ($gen : $fuidIdent $len → $alpha)
+          ($capa : Nat := 666)
+        : $mapIdent $alpha :=
+          SafeIdx.UidMap.generate $len $gen $capa
+        @[inherit_doc SafeIdx.UidMap.mkD]
+        abbrev $(mkIdent `mkD)
+          ($len:ident : Nat)
+          (default : $alpha)
+          ($capa : Nat := 666)
+        : $mapIdent $alpha :=
+          SafeIdx.UidMap.mkD $len default $capa
+        @[inherit_doc SafeIdx.UidMap.mkI]
+        abbrev $(mkIdent `mkI)
+          ($len:ident : Nat)
+          [Inhabited $alpha]
+          ($capa : Nat := 666)
+        : $mapIdent $alpha :=
+          SafeIdx.UidMap.mkI $len $capa
+      end $mapIdent
+    )
 
 
 /-- Defines a safe index type: `index <uid>`.
