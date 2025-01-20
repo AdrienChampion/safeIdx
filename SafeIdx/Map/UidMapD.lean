@@ -219,7 +219,7 @@ variable
 
 /-- Sets a value in the map. -/
 def UidMapD.set : UidMapD n Uid α :=
-  ⟨dmap.raw.set ⟨toNat fuid.uid, legalIndex_of_isLegal fuid.isLt⟩ a, by simp⟩
+  ⟨dmap.raw.set (toNat fuid.uid) a (legalIndex_of_isLegal fuid.isLt), by simp⟩
 
 /-- Attempts to set a value in the map, yields `true` if successful. -/
 def UidMapD.set? : Bool × UidMapD n Uid α :=
