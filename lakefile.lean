@@ -8,8 +8,3 @@ package «safeIdx» {
 lean_lib «SafeIdx» {
   -- add library configuration options here
 }
-
-@[default_target]
-lean_exe «safeIdx» {
-  root := `Main
-}
