@@ -377,7 +377,7 @@ theorem UidMapD.toMap_len
   {map : UidMap Uid α}
   (h : map = dmap.toMap)
 : map.len = n := by
-  simp only [h, toMap, len]
+  simp only [h, toMap]
 
 /-- Turn a `UidMapD` into a `Map`. -/
 abbrev Map.ofUidMapD :=

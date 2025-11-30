@@ -191,8 +191,7 @@ where
 
 /-- Attempts to retrieve a value in the map. -/
 def UidMapD.get? : Option α :=
-  toNat uid
-  |> dmap.raw.get?
+  dmap.raw[toNat uid]?
 
 /-- Retrieves a value at some index, crashes if none. -/
 def UidMapD.get! [Inhabited α] : α :=
@@ -290,7 +289,7 @@ def UidMapD.foldrIdx
 where
   foldrIdxAux
     (acc : β) (idxSucc : Nat)
-    (h : idxSucc ≤ n := by simp_arith)
+    (h : idxSucc ≤ n := by grind)
   := match idxSucc with
   | 0 => acc
   | idx + 1 =>

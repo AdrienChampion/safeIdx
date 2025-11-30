@@ -51,7 +51,7 @@ structure FUid
   (n : Nat)
 where
   uid : Uid
-  isLt : toNat uid < n := by simp_arith
+  isLt : toNat uid < n := by grind
 
 instance FUid.toString
   [UidSpec Uid] [ToString Uid]
@@ -70,7 +70,7 @@ instance : CoeDep (FUid Uid n) fuid Uid where
 /-- A `FUid _ n'` is a `FUid _ n` when `n' ≤ n`. -/
 def FUid.lift
   (fuid : FUid Uid n')
-  (h : n' ≤ n := by try assumption ; try simp_arith)
+  (h : n' ≤ n := by try assumption ; try grind)
 : FUid Uid n :=
   ⟨fuid.uid, Nat.lt_of_lt_of_le fuid.isLt h⟩
 
@@ -78,7 +78,7 @@ def FUid.lift
 def FUid.ofNat
   {Uid : outParam Type} [S : UidSpec Uid]
   (n n' : Nat)
-  (h : n' < n := by simp_arith)
+  (h : n' < n := by grind)
 : FUid Uid n :=
   ⟨S.ofNat n', by simp [S.cancel_to_of] ; assumption⟩
 
@@ -89,7 +89,7 @@ def FUid.inc
   ⟨
     fuid, by
       let h := fuid.isLt
-      simp_arith
+      simp +arith
       exact Nat.le_of_lt h
   ⟩
 
